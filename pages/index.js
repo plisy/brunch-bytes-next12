@@ -2,7 +2,11 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export default function Home({ post }) {
+  if (!post) {
+    return null;
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,12 +17,11 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          {post.title}
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          {post.body}
         </p>
 
         <div className={styles.grid}>
@@ -66,4 +69,16 @@ export default function Home() {
       </footer>
     </div>
   )
+};
+
+export async function getServerSideProps() {
+  console.log("Fetching data from jsonplaceholder");
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+  const json = await res.json();
+  console.log("Got status = ", res.status);
+  return {
+    props: {
+      post: json,
+    }
+  };
 }
